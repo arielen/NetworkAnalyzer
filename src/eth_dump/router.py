@@ -1,5 +1,7 @@
 import asyncio
 
+from typing import Dict, Any
+
 from fastapi import APIRouter, Query
 from .eth_dump import EthernetDump
 
@@ -15,24 +17,36 @@ router = APIRouter(
 @router.get("/")
 async def get_eth_dump(
     interface: str = Query(
-        "wlp4s0",
-        description="Interface name"
+        description="Название интерфейса",
+        default="wlp4s0",
     ),
-        count_pkt: int = Query(
-            1,
-            description="Number of packets to dump"
+    count_pkt: int = Query(
+        description="Количество пакетов для дампа",
+        default=1,
     ),
-        type: str = Query(
-            "ip",
-            description="Type of packets (tcp, udp, ip, vlan, wlan)"
+    type: str = Query(
+        description="Тип пакетов. Пример: tcp, udp, ip, vlan, wlan",
+        default="ip",
     ),
-        dns: bool = Query(
-            False,
-            description="Use DNS to resolve hostnames instead of IP addresses"
+    dns: bool = Query(
+        description="Использовать DNS для разрешения имен хостов вместо IP-адресов",
+        default=False,
     ),
-) -> dict:
+) -> Dict[str, Any]:
     """
-    Make a Ethernet traffic dump on a specified interface and return a dictionary with the results.
+    Сделать дамп Ethernet-трафика на указанном интерфейсе и вернуть словарь с результатами.
+
+    :param interface: Название сетевого интерфейса, откуда получить трафик (по умолчанию: 'wlp4s0')
+    :type interface: str
+    :param count_pkt: Количество пакетов для дампа (по умолчанию: 1)
+    :type count_pkt: int
+    :param type: Тип пакетов (tcp, udp, ip, vlan, wlan) (по умолчанию: 'ip')
+    :type type: str
+    :param dns: Использовать DNS для разрешения имен хостов вместо IP-адресов (по умолчанию: False)
+    :type dns: bool
+
+    :return: Словарь, содержащий количество загруженного и отправленного трафика
+    :rtype: dict
     """
     responce = await EthernetDump().get_data(interface, count_pkt, type, dns)
     return responce
@@ -41,25 +55,37 @@ async def get_eth_dump(
 @router.get("/port")
 async def get_eth_dump_extended(
     interface: str = Query(
-        "wlp4s0",
-        description="Interface name"
+        description="Название сетевого интерфейса",
+        default="wlp4s0",
     ),
     count_pkt: int = Query(
-        1,
-        description="Number of packets to dump"
+        description="Количество пакетов для дампа",
+        default=1,
     ),
     dns: bool = Query(
-        False,
-        description="Use DNS to resolve hostnames instead of IP addresses"
+        description="Использовать DNS для разрешения имен хостов вместо IP-адресов",
+        default=False,
     ),
     port: int = Query(
-        443,
-        description="Port number"
+        description="Номер порта для дампа",
+        default=443,
     ),
-) -> dict:
+) -> Dict[str, Any]:
     """
-    Make a Ethernet traffic dump on a specified interface and return a dictionary with the results.
-    More extended version.
+    Сделать дамп Ethernet-трафика на указанном интерфейсе и вернуть словарь с результатами.
+    Более расширенная версия.
+
+    :param interface: Название сетевого интерфейса, откуда получить трафик (по умолчанию: 'wlp4s0')
+    :type interface: str
+    :param count_pkt: Количество пакетов для дампа (по умолчанию: 1)
+    :type count_pkt: int
+    :param dns: Использовать DNS для разрешения имен хостов вместо IP-адресов (по умолчанию: False)
+    :type dns: bool
+    :param port: Номер порта (по умолчанию: 443)
+    :type port: int
+
+    :return: Словарь, содержащий количество загруженного и отправленного трафика
+    :rtype: dict
     """
     try:
         responce = await asyncio.wait_for(
@@ -76,29 +102,43 @@ async def get_eth_dump_extended(
 @router.get("/host")
 async def get_eth_dump_extended(
     interface: str = Query(
-        "wlp4s0",
-        description="Interface name"
+        description="Название сетевого интерфейса",
+        default="wlp4s0",
     ),
     count_pkt: int = Query(
-        1,
-        description="Number of packets to dump"
+        description="Количество пакетов для дампа",
+        default=1,
     ),
     type: str = Query(
-        "ip",
-        description="Type of packets (tcp, udp, ip, vlan, wlan)"
+        description="Тип пакетов. Пример: tcp, udp, ip, vlan, wlan",
+        default="ip",
     ),
     dns: bool = Query(
-        False,
-        description="Use DNS to resolve hostnames instead of IP addresses"
+        description="Использовать DNS для разрешения имен хостов вместо IP-адресов",
+        default=False,
     ),
     host: str = Query(
-        "localhost",
-        description="Hostname or IP address"
+        description="Имя или IP-адрес для дампа",
+        default="localhost",
     ),
-) -> dict:
+) -> Dict[str, Any]:
     """
-    Make a Ethernet traffic dump on a specified interface and return a dictionary with the results.
-    More extended version.
+    Сделать дамп Ethernet-трафика на указанном интерфейсе и вернуть словарь с результатами.
+    Более расширенная версия.
+
+    :param interface: Название сетевого интерфейса, откуда получить трафик (по умолчанию: 'wlp4s0')
+    :type interface: str
+    :param count_pkt: Количество пакетов для дампа (по умолчанию: 1)
+    :type count_pkt: int
+    :param type: Тип пакетов. Пример: tcp, udp, ip, vlan, wlan
+    :type type: str
+    :param dns: Использовать DNS для разрешения имен хостов вместо IP-адресов (по умолчанию: False)
+    :type dns: bool
+    :param host: Имя или IP-адрес для дампа (по умолчанию: 'localhost')
+    :type host: str
+
+    :return: Словарь, содержащий количество загруженного и отправленного трафика
+    :rtype: dict
     """
     try:
         responce = await asyncio.wait_for(
@@ -115,33 +155,49 @@ async def get_eth_dump_extended(
 @router.get("/host_and_port")
 async def get_eth_dump_extended(
     interface: str = Query(
-        "wlp4s0",
-        description="Interface name"
+        description="Название сетевого интерфейса",
+        default="wlp4s0",
     ),
     count_pkt: int = Query(
-        1,
-        description="Number of packets to dump"
+        description="Количество пакетов для дампа",
+        default=1,
     ),
     type: str = Query(
-        "ip",
-        description="Type of packets (tcp, udp, ip, vlan, wlan)"
+        description="Тип пакетов. Пример: tcp, udp, ip, vlan, wlan",
+        default="ip",
     ),
     dns: bool = Query(
-        False,
-        description="Use DNS to resolve hostnames instead of IP addresses"
+        description="Использовать DNS для разрешения имен хостов вместо IP-адресов",
+        default=False,
     ),
     host: str = Query(
-        "localhost",
-        description="Hostname or IP address"
+        description="Имя или IP-адрес для дампа",
+        default="localhost",
     ),
     port: int = Query(
-        443,
-        description="Port number"
+        description="Номер порта",
+        default=443,
     ),
-) -> dict:
+) -> Dict[str, Any]:
     """
-    Make a Ethernet traffic dump on a specified interface and return a dictionary with the results.
-    More extended version.
+    Сделать дамп Ethernet-трафика на указанном интерфейсе и вернуть словарь с результатами.
+    Более расширенная версия.
+
+    :param interface: Название сетевого интерфейса, откуда получить трафик (по умолчанию: 'wlp4s0')
+    :type interface: str
+    :param count_pkt: Количество пакетов для дампа (по умолчанию: 1)
+    :type count_pkt: int
+    :param type: Тип пакетов. Пример: tcp, udp, ip, vlan, wlan
+    :type type: str
+    :param dns: Использовать DNS для разрешения имен хостов вместо IP-адресов (по умолчанию: False)
+    :type dns: bool
+    :param host: Имя или IP-адрес для дампа (по умолчанию: 'localhost')
+    :type host: str
+    :param port: Номер порта (по умолчанию: 443)
+    :type port: int
+
+    :return: Словарь, содержащий количество загруженного и отправленного трафика
+    :rtype: dict
     """
     try:
         responce = await asyncio.wait_for(

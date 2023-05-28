@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Dict, Any
 from fastapi import FastAPI, Query
 
 from eth_dump.router import router as router_eth_dump
@@ -12,7 +12,7 @@ app = FastAPI(
     title="Network Monitor",
     version="0.0.1",
     description="""
-    Web service for analyzing and monitoring network connections on a local computer.
+    Web-сервис для анализа и мониторинга сетевых подключений на локальном компьютере
     """,
 )
 
@@ -20,11 +20,27 @@ app.include_router(router_about_network)
 app.include_router(router_eth_dump)
 
 
-
-@app.post("/ping")
-async def ping(res: str = "8.8.8.8", count_pkt: int = 1) -> dict:
+@app.post("/ping", )
+async def ping(
+    res: str = Query(
+        description="IP-адрес сервера для проверки доступности (ping)",
+        default="8.8.8.8",
+    ),
+    count_pkt: int = Query(
+        description="Количество пакетов для проверки (ping)",
+        default=1,
+    )
+) -> Dict[str, Any]:
     """
-    Endpoint to check the status of the server by pinging it.
+    Конечная точка для проверки состояния сервера путем пинга.
+
+    :param res: IP-адрес сервера для пинга (по умолчанию: '8.8.8.8')
+    :type res: str
+    :param count_pkt: Количество пакетов для пинга (по умолчанию: 1)
+    :type count_pkt: int
+
+    :return: Словарь, содержащий количество загруженного и отправленного трафика на выбранном интерфейсе
+    :rtype: dict
     """
     responce = await get_ping_status(res, count_pkt)
     return responce
